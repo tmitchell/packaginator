@@ -26,11 +26,15 @@
                 {% with result.object as package %}
                     {% include "package/includes/_package.html"%}
                 {% endwith %}
+            {% else %}{% if result.verbose_name == 'Grid' %}
+                {% with result.object as grid %}
+                    {% include "grid/snippets/grid.html" %}
+                {% endwith %}
             {% else %}
                 <p>
                     {{ result.verbose_name }}: <a href="{{ result.object.get_absolute_url }}">{{ result.object.title }}</a>
                 </p>
-            {% endif %}
+            {% endif %}{% endif %}
         {% empty %}
             <p>No results found.</p>
         {% endfor %}
