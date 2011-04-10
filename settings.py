@@ -186,6 +186,7 @@ PREREQ_APPS = [
     "reversion",
     "django_sorting",
     "flatblocks",
+    "haystack",
     
     # Pinax
     "pinax.apps.account",
@@ -289,7 +290,7 @@ RESTRICT_PACKAGE_EDITORS = False
 # only django admins can delete
 RESTRICT_GRID_EDITORS = False
 
-
+HAYSTACK_SITECONF = "packaginator.search_sites"
 
 
 CELERYD_TASK_TIME_LIMIT = 300
