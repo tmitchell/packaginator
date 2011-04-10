@@ -7,6 +7,7 @@ from django.contrib import admin
 admin.autodiscover()
 
 from pinax.apps.account.openid_consumer import PinaxConsumer
+from haystack.views import SearchView
 
 from homepage.views import homepage
 from package.views import package_autocomplete, category, packaginate
@@ -30,6 +31,7 @@ urlpatterns = patterns("",
     url(r"^packages/", include("package.urls")),
     url(r"^grids/", include("grid.urls")),  
     url(r"^search/", include("searchv1.urls")),
+    url(r'^search2/', SearchView(template='searchv2/search.html'), name='haystack_search'),
     url(r"^feeds/", include("feeds.urls")),
     
     url(r"^categories/(?P<slug>[-\w]+)/$", category, name="category"),
