@@ -22,9 +22,15 @@
         <h3>Results</h3>
 
         {% for result in page.object_list %}
-            <p>
-                {{ result.verbose_name }}: <a href="{{ result.object.get_absolute_url }}">{{ result.object.title }}</a>
-            </p>
+            {% if result.verbose_name == 'Package' %}
+                {% with result.object as package %}
+                    {% include "package/includes/_package.html"%}
+                {% endwith %}
+            {% else %}
+                <p>
+                    {{ result.verbose_name }}: <a href="{{ result.object.get_absolute_url }}">{{ result.object.title }}</a>
+                </p>
+            {% endif %}
         {% empty %}
             <p>No results found.</p>
         {% endfor %}
