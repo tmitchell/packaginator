@@ -150,6 +150,7 @@ PROJECT_APPS = [
     "package",
     "profiles",
     "searchv1",
+    "searchv2",
     "apiv1",
     "feeds",
     "pypi",
