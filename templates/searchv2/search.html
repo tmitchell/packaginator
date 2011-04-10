@@ -1,4 +1,4 @@
-{% extends "searchv2/base.html" %}
+{% extends "searchv1/base.html" %}
 
 {% load i18n %}
 {% load uni_form_tags %}
@@ -6,47 +6,82 @@
 {% block head_title %}{% trans "Search" %}{% endblock %}
 
 {% block body %}
+
     <h1>{% trans "Search" %}</h1>
-
-    <form class="uniForm" method="get">
+    
+    <form class="uniForm">
         <fieldset>
-            {{ form|as_uni_form }}
+                {{ form|as_uni_form }}
 
-            <div class="form_block">
-                <input type="submit" name="b" value="{% trans "Search" %}" class="medium awesome forestgreen">
-            </div>
+            <div class="form_block">        
+                <input type="submit" name="b" value="{% trans "Search" %}" class="medium awesome forestgreen"> 
+            </div>            
         </fieldset>
     </form>
 
-    {% if query %}
-        <h3>Results</h3>
-
-        {% for result in page.object_list %}
-            {% if result.verbose_name == 'Package' %}
-                {% with result.object as package %}
-                    {% include "package/includes/_package.html"%}
-                {% endwith %}
-            {% else %}{% if result.verbose_name == 'Grid' %}
+    
+    <div id="search-results">
+        <div id="grid-listing">
+            <h2>{% if grids.count %}{% trans "Grids" %}{% else %}{% trans "No grids found" %}{% endif %}</h2>
+            {% if request.user.is_authenticated and profile.can_add_grid %}
+            <p><a class="medium awesome forestgreen" href="{% url add_grid %}">{% trans "add grid »" %}</a>
+                <a href="{% url latest_grids %}">latest</a> <a href="{% url grids %}">{% trans "all" %}</a>
+            </p> 
+            {% endif %}
+            {% for result in grids %}
                 {% with result.object as grid %}
                     {% include "grid/snippets/grid.html" %}
                 {% endwith %}
-            {% else %}
-                <p>
-                    {{ result.verbose_name }}: <a href="{{ result.object.get_absolute_url }}">{{ result.object.title }}</a>
-                </p>
-            {% endif %}{% endif %}
-        {% empty %}
-            <p>No results found.</p>
-        {% endfor %}
+            {% endfor %}
+        </div>
+        <div id="package-listing">
+            <h2>{% if packages.count %}{% trans "Packages" %}{% else %}{% trans "No packages found" %}{% endif %}</h2>
+            <p>
+            {% if request.user.is_authenticated and profile.can_add_package %}
+                <a class="medium awesome forestgreen" href="{% url add_package %}">{% trans "add package »" %}</a>
+            {% endif %}
+                <a href="{% url latest_packages %}">latest</a> <a href="{% url packages %}">{% trans "all" %}</a>
+            </p>
+            {% for result in packages %}
+                {% with result.object as package %}
+                    {% include "package/includes/_package.html"%}
+                {% endwith %}
+            {% endfor %}
+        </div>    
+    </div>
 
-        {% if page.has_previous or page.has_next %}
-            <div>
-                {% if page.has_previous %}<a href="?q={{ query }}&amp;page={{ page.previous_page_number }}">{% endif %}&laquo; Previous{% if page.has_previous %}</a>{% endif %}
-                |
-                {% if page.has_next %}<a href="?q={{ query }}&amp;page={{ page.next_page_number }}">{% endif %}Next &raquo;{% if page.has_next %}</a>{% endif %}
-            </div>
-        {% endif %}
-    {% else %}
-        {# Show some example queries to run, maybe query syntax, something else? #}
-    {% endif %}
+{% endblock %}
+
+{% block extra_body %}
+<script>
+    $("#id_q").focus();
+    
+    {% for result in grids %}
+        {% with result.object as grid %}
+            $('#grid-{{ grid.id }}').mouseover(function() {
+                $('#grid-{{ grid.id }}').addClass("clickable");
+            });
+            $('#grid-{{ grid.id }}').mouseout(function() {
+                $('#grid-{{ grid.id }}').removeClass("clickable");
+            });
+            $('#grid-{{ grid.id }}').click(function() {
+                $(location).attr("href","{% url grid grid.slug %}");
+            });
+        {% endwith %}
+    {% endfor %}    
+    
+    {% for result in packages %}
+        {% with result.object as package %}
+            $('#package-{{ package.id }}').mouseover(function() {
+                $('#package-{{ package.id }}').addClass("clickable");
+            });
+            $('#package-{{ package.id }}').mouseout(function() {
+                $('#package-{{ package.id }}').removeClass("clickable");
+            });
+            $('#package-{{ package.id }}').click(function() {
+                $(location).attr("href","{% url package package.slug %}");
+            });
+        {% endwith %}
+    {% endfor %}
+</script>
 {% endblock %}
