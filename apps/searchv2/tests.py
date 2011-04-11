@@ -20,8 +20,16 @@ HAYSTACK_SEARCH_ENGINE"""""
             return
         url = reverse('search')
         getvars = { 'q' : 'steroid' }
-        response = self.client.get(url, data=getvars, follow=True)
+        response = self.client.get(url, data=getvars)
         self.assertContains(response, 'Testability')
+
+    def test_search_grid(self):
+        if not self.run_tests:
+            return
+        url = reverse('search')
+        getvars = { 'q' : 'another' }
+        response = self.client.get(url, data=getvars)
+        self.assertContains(response, 'Another grid for testing')
 
     def tearDown(self):
         pass
