@@ -109,6 +109,15 @@ class Package(BaseModel):
         handler = get_repo_for_repo_url(self.repo_url)
         return handler
 
+    @property
+    def latest_version(self):
+        """Return the most-recently created version object of the package"""
+        vqs = self.version_set.all()
+        if vqs.exists():
+            return vqs[0]
+
+        return None
+
     def active_examples(self):
         return self.packageexample_set.filter(active=True)
     
