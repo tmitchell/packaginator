@@ -1,23 +1,27 @@
-"""
-This file demonstrates two different styles of tests (one doctest and one
-unittest). These will both pass when you run "manage.py test".
-
-Replace these with more appropriate tests for your application.
-"""
-
+from django.conf import settings
+from django.core.urlresolvers import reverse
 from django.test import TestCase
 
-class SimpleTest(TestCase):
-    def test_basic_addition(self):
-        """
-        Tests that 1 + 1 always equals 2.
-        """
-        self.failUnlessEqual(1 + 1, 2)
+class SearchV2Test(TestCase):
+    fixtures = ['test_initial_data.json']
 
-__test__ = {"doctest": """
-Another way to test that 1 + 1 is equal to 2.
+    def setUp(self):
+        # this is a hack but 1.2.5 doesn't have test skipping and I don't know enough Haystack internals
+        # to force the database backend to simple and/or force an index rebuild so the results actually
+        # come back
+        self.run_tests = settings.HAYSTACK_ENABLED and settings.HAYSTACK_SEARCH_ENGINE == 'simple'
 
->>> 1 + 1 == 2
-True
-"""}
+        if not self.run_tests:
+            print """Skipping search tests because Haystack is not configured to use the 'simple'
+HAYSTACK_SEARCH_ENGINE"""""
 
+    def test_search_package(self):
+        if not self.run_tests:
+            return
+        url = reverse('search')
+        getvars = { 'q' : 'steroid' }
+        response = self.client.get(url, data=getvars, follow=True)
+        self.assertContains(response, 'Testability')
+
+    def tearDown(self):
+        pass
