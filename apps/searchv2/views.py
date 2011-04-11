@@ -1,4 +1,5 @@
-from django.http import HttpResponse
+from django.core.urlresolvers import reverse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.utils import simplejson
@@ -13,6 +14,14 @@ def search(request, template_name='searchv2/search.html'):
     ctx = {}
 
     if request.GET and len(request.GET):
+        try:
+            # see if there was an exact match for the query
+            package = Package.objects.get(title=request.GET.get('q', ''))
+            url = reverse("package", args=[package.slug.lower()])
+            return HttpResponseRedirect(url)
+        except Package.DoesNotExist:
+            pass
+
         form = SearchForm(request.GET)
         if form.is_valid():
             ctx['grids'] = form.search().models(Grid)
