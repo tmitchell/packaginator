@@ -40,5 +40,23 @@ HAYSTACK_SEARCH_ENGINE"""""
         response = self.client.get(search_url, data=getvars)
         self.assertRedirects(response, dest_url)
 
+    def test_grid_autocomplete(self):
+        if not self.run_tests:
+            return
+        url = reverse('search_grids_autocomplete')
+        getvars = { 'term' : 'another' }
+        response = self.client.get(url, data=getvars)
+        self.assertEqual(response['content-type'], 'text/javascript')
+        self.assertContains(response, 'Another Testing')
+
+    def test_package_autocomplete(self):
+        if not self.run_tests:
+            return
+        url = reverse('search_packages_autocomplete')
+        getvars = { 'term' : 'steroid' }
+        response = self.client.get(url, data=getvars)
+        self.assertEqual(response['content-type'], 'text/javascript')
+        self.assertContains(response, 'Testability')
+
     def tearDown(self):
         pass
