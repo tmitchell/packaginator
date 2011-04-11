@@ -31,5 +31,14 @@ HAYSTACK_SEARCH_ENGINE"""""
         response = self.client.get(url, data=getvars)
         self.assertContains(response, 'Another grid for testing')
 
+    def test_search_redirect(self):
+        if not self.run_tests:
+            return
+        search_url = reverse('search')
+        getvars = { 'q' : 'Testability' }
+        dest_url = reverse('package', args=['testability'])
+        response = self.client.get(search_url, data=getvars)
+        self.assertRedirects(response, dest_url)
+
     def tearDown(self):
         pass
