@@ -8,12 +8,11 @@ from searchv2.views import (
     search_by_category_autocomplete,
 )
     
-
 urlpatterns = patterns("",
     url(
         regex   = '^$',
         view    = search,
-        name    = 'searchv2',
+        name    = 'search',
     ),
         url(
         regex   = '^grids/autocomplete/$',

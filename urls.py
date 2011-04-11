@@ -7,13 +7,16 @@ from django.contrib import admin
 admin.autodiscover()
 
 from pinax.apps.account.openid_consumer import PinaxConsumer
-from haystack.views import SearchView
 
 from homepage.views import homepage
 from package.views import package_autocomplete, category, packaginate
 
 handler500 = "pinax.views.server_error"
 
+if settings.HAYSTACK_ENABLED:
+    search_urlconf = 'searchv2.urls'
+else:
+    search_urlconf = 'searchv1.urls'
 
 urlpatterns = patterns("",
 
@@ -29,9 +32,8 @@ urlpatterns = patterns("",
     url(r"^notices/", include("notification.urls")),
     url(r"^announcements/", include("announcements.urls")),
     url(r"^packages/", include("package.urls")),
-    url(r"^grids/", include("grid.urls")),  
-    url(r"^search/", include("searchv1.urls")),
-    url(r'^search2/', include("searchv2.urls")),
+    url(r"^grids/", include("grid.urls")),
+    url(r"^search/", include(search_urlconf)),
     url(r"^feeds/", include("feeds.urls")),
     
     url(r"^categories/(?P<slug>[-\w]+)/$", category, name="category"),

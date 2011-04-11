@@ -150,7 +150,6 @@ PROJECT_APPS = [
     "package",
     "profiles",
     "searchv1",
-    "searchv2",
     "apiv1",
     "feeds",
     "pypi",
@@ -313,6 +312,9 @@ if LOCAL_INSTALLED_APPS:
 SUPPORTED_REPO.extend(["bitbucket", "github"])
 if LAUNCHPAD_ACTIVE:
     SUPPORTED_REPO += ["launchpad"]
+
+if HAYSTACK_ENABLED:
+    INSTALLED_APPS.append("searchv2")
 
 try:
     import djcelery
