@@ -6,6 +6,7 @@ from grid.models import Grid
 
 class GridIndex(indexes.SearchIndex):
     text = indexes.CharField(document=True, use_template=True)
+    title = indexes.CharField(model_attr='title')
     description = indexes.CharField(model_attr='description')
 
     def get_queryset(self):
