@@ -1,7 +1,10 @@
+from django.http import HttpResponse
 from django.shortcuts import render_to_response
 from django.template import RequestContext
+from django.utils import simplejson
 
 from haystack.forms import SearchForm
+from haystack.query import SearchQuerySet
 
 from package.models import Package
 from grid.models import Grid
@@ -20,3 +23,33 @@ def search(request, template_name='searchv2/search.html'):
     ctx['form'] = form
 
     return render_to_response(template_name, ctx, context_instance=RequestContext(request))
+
+def find_packages_autocomplete(q):
+    sqs = SearchQuerySet()
+    sqs = sqs.models(Package)
+    sqs = sqs.auto_query(q)
+
+    return sqs
+
+def find_grids_autocomplete(q):
+    sqs = SearchQuerySet()
+    sqs = sqs.models(Grid)
+    sqs = sqs.auto_query(q)
+
+    return sqs
+
+def search_by_function_autocomplete(request, search_function):
+    """
+    Searches in Grids and Packages
+    """
+    q = request.GET.get('term', '')
+    
+    if q:
+        objects = search_function(q)
+        objects = [res.title for res in objects]
+        objects = objects[:15]
+        json_response = simplejson.dumps(list(objects))
+    else:
+        json_response = simplejson.dumps([])
+
+    return HttpResponse(json_response, mimetype='text/javascript')
