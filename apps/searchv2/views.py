@@ -53,3 +53,26 @@ def search_by_function_autocomplete(request, search_function):
         json_response = simplejson.dumps([])
 
     return HttpResponse(json_response, mimetype='text/javascript')
+
+def search_by_category_autocomplete(request):
+    """
+    Search by categories on packages
+    """
+    q = request.GET.get('term', '')
+    if q:
+        package_sqs = SearchQuerySet().models(Package).auto_query(q)
+        # turn the haystack results into a Package QuerySet
+        packages = Package.objects.filter(pk__in=[res.pk for res in package_sqs])
+
+        # filter out the excluded categories
+        ex_cat = request.GET.get('ex_cat', '')
+        if ex_cat.strip():
+            for cat in ex_cat.split(','):
+                packages = packages.exclude(category__slug=cat)
+
+        objects = packages.values_list('title', flat=True)[:15]
+    else:
+        objects = []
+
+    json_response = simplejson.dumps(list(objects))
+    return HttpResponse(json_response, mimetype='text/javascript')

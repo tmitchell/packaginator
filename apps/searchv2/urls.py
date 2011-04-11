@@ -5,6 +5,7 @@ from searchv2.views import (
     search_by_function_autocomplete,
     find_grids_autocomplete,
     find_packages_autocomplete,
+    search_by_category_autocomplete,
 )
     
 
@@ -29,5 +30,10 @@ urlpatterns = patterns("",
         kwargs  = dict(
             search_function=find_packages_autocomplete,
             )
+    ),
+    url(
+        regex   = '^packages/by-category/autocomplete/$',
+        view    = search_by_category_autocomplete,
+        name    = 'search_by_category_autocomplete',
     ),
 )
