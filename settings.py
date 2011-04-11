@@ -313,7 +313,7 @@ SUPPORTED_REPO.extend(["bitbucket", "github"])
 if LAUNCHPAD_ACTIVE:
     SUPPORTED_REPO += ["launchpad"]
 
-if HAYSTACK_ENABLED:
+if PACKAGINATOR_SEARCH_HAYSTACK:
     INSTALLED_APPS.append("searchv2")
 
 try:

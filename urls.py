@@ -13,7 +13,7 @@ from package.views import package_autocomplete, category, packaginate
 
 handler500 = "pinax.views.server_error"
 
-if settings.HAYSTACK_ENABLED:
+if settings.PACKAGINATOR_SEARCH_HAYSTACK:
     search_urlconf = 'searchv2.urls'
 else:
     search_urlconf = 'searchv1.urls'
