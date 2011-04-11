@@ -58,5 +58,15 @@ HAYSTACK_SEARCH_ENGINE"""""
         self.assertEqual(response['content-type'], 'text/javascript')
         self.assertContains(response, 'Testability')
 
+    def test_category_autocomplete(self):
+        if not self.run_tests:
+            return
+        url = reverse('search_by_category_autocomplete')
+        getvars = { 'term' : 'test', 'ex_cat' : ['apps'] }
+        response = self.client.get(url, data=getvars)
+        self.assertEqual(response['content-type'], 'text/javascript')
+        self.assertContains(response, 'Django')
+        self.assertNotContains(response, 'Testability')
+
     def tearDown(self):
         pass

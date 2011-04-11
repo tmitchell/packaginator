@@ -102,6 +102,15 @@
     "model" : "package.category",
     "pk" : 1
   },
+  { "fields" : { "created" : "2010-01-01 12:00:00",
+        "description" : "They make life easier",
+        "modified" : "2010-01-01 12:00:00",
+        "slug" : "frameworks",
+        "title" : "Framework"
+      },
+    "model" : "package.category",
+    "pk" : 2
+  },
   { "fields" : { "category" : 1,
         "created" : "2010-01-01 13:00:00",
         "modified" : "2010-01-02 18:00:00",
@@ -173,6 +182,24 @@
       },
     "model" : "package.package",
     "pk" : 4
+  },
+  { "fields" : { "category" : 2,
+        "created" : "2010-01-01 15:00:00",
+        "modified" : "2010-01-02 20:00:00",
+        "participants" : "tmitchell",
+        "pypi_downloads" : 0,
+        "pypi_url" : "",
+        "related_packages" : [  ],
+        "repo_commits" : 0,
+        "repo_description" : "Yet another (yet another) test package, with no grid affiliation.",
+        "repo_forks" : 0,
+        "repo_url" : "https://github.com/django/django",
+        "repo_watchers" : 0,
+        "slug" : "django",
+        "title" : "Django"
+      },
+    "model" : "package.package",
+    "pk" : 5
   },
   { "fields" : { "name" : "Moderators",
         "permissions" : [ [ "delete_gridpackage",
