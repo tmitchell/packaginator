@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.test import TestCase
@@ -12,6 +13,16 @@ class GridV1Tests(TestCase):
         Set up initial data, done through Python because fixtures break way too
         quickly with migrations and are terribly hard to maintain.
         """
+
+        # this is a hack but 1.2.5 doesn't have test skipping and I don't know enough Haystack internals
+        # to force the database backend to simple and/or force an index rebuild so the results actually
+        # come back
+        self.haystack = settings.PACKAGINATOR_SEARCH_HAYSTACK and settings.HAYSTACK_SEARCH_ENGINE == 'simple'
+
+        if not self.haystack:
+            print """Skipping search tests because Haystack is not configured to use the 'simple'
+HAYSTACK_SEARCH_ENGINE"""""
+
         app = Category.objects.create(
             title='App',
             slug='app',
@@ -19,6 +30,10 @@ class GridV1Tests(TestCase):
         self.grid = Grid.objects.create(
             title='A Grid',
             slug='grid',
+        )
+        self.grid2 = Grid.objects.create(
+            title='A Searchable Grid',
+            slug='grid2',
         )
         self.pkg1 = Package.objects.create(
             title='Package1',
@@ -53,3 +68,16 @@ class GridV1Tests(TestCase):
         pkg2_usage_count = int(package_dict[self.pkg2.slug]['usage_count'])
         self.assertEqual(pkg1_usage_count, self.pkg1.usage.count())
         self.assertEqual(pkg2_usage_count, self.pkg2.usage.count())
+
+    def test_02_grid_search(self):
+        if not self.haystack:
+            return
+        kwargs = {
+            'api_name': 'v1',
+            'resource_name': 'grid',
+        }
+        url = reverse('api_dispatch_list', kwargs=kwargs)
+        getvars = { 'q' : 'searchable' }
+        response = self.client.get(url, data=getvars)
+        self.assertContains(response, "A Searchable Grid")
+        self.assertNotContains(response, "A Grid")
