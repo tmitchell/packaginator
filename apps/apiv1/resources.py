@@ -223,4 +223,18 @@ class PackageResource(PackageResourceBase):
         allowed_methods = ['get']
         include_absolute_url = True
         lookup_field = 'slug'
-        
+
+    def build_filters(self, filters=None):
+        if filters is None:
+            filters = {}
+
+        orm_filters = super(PackageResource, self).build_filters(filters)
+
+        if settings.PACKAGINATOR_SEARCH_HAYSTACK:
+            from haystack.query import SearchQuerySet
+
+            if "q" in filters:
+                sqs = SearchQuerySet().models(Package).auto_query(filters['q'])
+                orm_filters = {"pk__in": [ i.pk for i in sqs ]}
+
+        return orm_filters
