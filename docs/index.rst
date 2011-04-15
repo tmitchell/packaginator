@@ -37,6 +37,7 @@ Contents:
    reference
    repo_handlers
    testing_instructions
+   haystack
    troubleshooting
 
 Credits
