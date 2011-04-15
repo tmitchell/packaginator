@@ -32,7 +32,7 @@
           </p>
           {% for package_result in packages %}
             {% with package_result.object as package %}
-              {% include "package/includes/_package3.html"%}
+              {% include "package/includes/_package.html"%}
             {% endwith %}
           {% endfor %}
       </div>    
@@ -46,7 +46,7 @@
           </p>
           {% for grid_result in grids %}
             {% with grid_result.object as grid %}
-              {% include "grid/snippets/grid2.html" %}
+              {% include "grid/snippets/grid.html" %}
             {% endwith %}
           {% endfor %}
       </div>
