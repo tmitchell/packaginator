@@ -5,6 +5,7 @@ the :class:`~apps.apiv1.api.Api` in the main :mod:`urls.py <urls>`.
 """
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
+from django.conf import settings
 
 from tastypie import fields
 from tastypie.bundle import Bundle
@@ -126,6 +127,21 @@ class GridResource(EnhancedModelResource):
         
         self.log_throttled_access(request)
         return self.create_response(request, object_list)
+
+    def build_filters(self, filters=None):
+        if filters is None:
+            filters = {}
+
+        orm_filters = super(GridResource, self).build_filters(filters)
+
+        if settings.PACKAGINATOR_SEARCH_HAYSTACK:
+            from haystack.query import SearchQuerySet
+
+            if "q" in filters:
+                sqs = SearchQuerySet().models(Grid).auto_query(filters['q'])
+                orm_filters = {"pk__in": [ i.pk for i in sqs ]}
+
+        return orm_filters
 
 
 class DpotwResource(ModelResource):
