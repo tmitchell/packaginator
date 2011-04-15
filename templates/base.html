@@ -178,12 +178,27 @@
             */
 
             $('#id_q_p').autocomplete({
-              source: '{% url search_packages_autocomplete %}',
-              minLength: 1,
-              open: function(event, ui) {           
-                ac_top = $('.ui-autocomplete').css('top'); 
-                $('.ui-autocomplete').css({'width': '250px', 'top': ac_top + 10 }); 
-              }
+                source: function(request, response) {
+                    $.ajax({
+                        url: "/api/v1/package/",
+                        data: {
+                            q: request.term
+                        },
+                        success: function(data) {
+                            response($.map(data.objects, function(item) {
+                                return {
+                                    label: item.title,
+                                    value: item.title
+                                }
+                            }));
+                        }
+                    });
+                }, 
+                minLength: 1,
+                open: function(event, ui) {
+                    ac_top = $('.ui-autocomplete').css('top');
+                    $('.ui-autocomplete').css({'width': '250px', 'top': ac_top + 10 });
+                }
             });
     
         </script>
