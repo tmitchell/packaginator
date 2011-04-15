@@ -180,7 +180,7 @@
             $('#id_q_p').autocomplete({
                 source: function(request, response) {
                     $.ajax({
-                        url: "/api/v1/package/",
+                        url: "{% url api_dispatch_list 'v1' 'package' %}",
                         data: {
                             q: request.term
                         },
