@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.test import TestCase
@@ -12,6 +13,16 @@ class PackageV1Tests(TestCase):
         Set up initial data, done through Python because fixtures break way too
         quickly with migrations and are terribly hard to maintain.
         """
+
+        # this is a hack but 1.2.5 doesn't have test skipping and I don't know enough Haystack internals
+        # to force the database backend to simple and/or force an index rebuild so the results actually
+        # come back
+        self.haystack = settings.PACKAGINATOR_SEARCH_HAYSTACK and settings.HAYSTACK_SEARCH_ENGINE == 'simple'
+
+        if not self.haystack:
+            print """Skipping search tests because Haystack is not configured to use the 'simple'
+HAYSTACK_SEARCH_ENGINE"""""
+
         app = Category.objects.create(
             title='App',
             slug='app',
@@ -31,6 +42,12 @@ class PackageV1Tests(TestCase):
             slug='package2',
             category=app,
             repo_url='https://github.com/cartwheelweb/packaginator'  
+        )
+        self.pkg3 = Package.objects.create(
+            title='Searchable Package3',
+            slug='package3',
+            category=app,
+            repo_url='https://github.com/tmitchell/django-wiki'
         )
         GridPackage.objects.create(package=self.pkg1, grid=self.grid)
         GridPackage.objects.create(package=self.pkg2, grid=self.grid)
@@ -68,3 +85,16 @@ class PackageV1Tests(TestCase):
         pkg_2 = json.loads(raw_json_pkg2)
         usage_count_pkg2 = int(pkg_2['usage_count'])
         self.assertEqual(usage_count_pkg2, self.pkg2.usage.count())
+
+    def test_02_packages_search(self):
+        if not self.haystack:
+            return
+        kwargs = {
+            'api_name': 'v1',
+            'resource_name': 'package',
+        }
+        url = reverse('api_dispatch_list', kwargs=kwargs)
+        getvars = { 'q' : 'searchable' }
+        response = self.client.get(url, data=getvars)
+        self.assertContains(response, "Package3")
+        self.assertNotContains(response, "Package1")
