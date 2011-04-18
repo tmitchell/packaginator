@@ -22,23 +22,23 @@ Contents:
    :maxdepth: 1
 
    introduction
-   api_docs
-   celery
-   contributing
-   contributors
-   database
-   faq
+   license   
    install
-   lessons_learned
-   license
-   management_commands
-   packaginator_settings
-   pypi_issues
-   reference
-   repo_handlers
-   testing_instructions
-   haystack
+   celery
    troubleshooting
+   faq   
+   packaginator_settings
+   testing_instructions
+   management_commands
+   pypi_issues
+   contributors
+   contributing
+   repo_handlers
+   api_docs
+   database
+   haystack
+   lessons_learned
+   reference
 
 Credits
 =======
